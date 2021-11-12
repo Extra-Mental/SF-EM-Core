@@ -1,0 +1,60 @@
+--@name KeyPress API
+--@author Extra Mental 76561198049754938 EM-Core
+--@shared
+
+local Table = {}
+
+hook.add("KeyPress", "KeyPress EM-Core", function(__Ply, __Key)
+
+    if not Table[__Ply:getSteamID()] then Table[__Ply:getSteamID()] = {} end
+    local Keys = Table[__Ply:getSteamID()]
+    local Keyname = table.keyFromValue(IN_KEY, __Key)
+    
+    Keys[Keyname] = 1
+    
+    Table[__Ply:getSteamID()..""] = Keys
+    
+    //printTable(Keys)
+
+end)
+
+hook.add("KeyRelease", "KeyPress EM-Core", function(__Ply, __Key)
+
+    if not Table[__Ply:getSteamID()] then Table[__Ply:getSteamID()] = {} end
+    local Keys = Table[__Ply:getSteamID()]
+    local Keyname = table.keyFromValue(IN_KEY, __Key)
+    
+    Keys[Keyname] = 0
+    
+    Table[__Ply:getSteamID()] = Keys
+
+end)
+
+function keyPressed(__Ply ,__Key)
+
+    __Key = string.upper(__Key)
+    
+    if not Table[__Ply:getSteamID()] then Table[__Ply:getSteamID()] = {} end
+    local Keys = Table[__Ply:getSteamID()]
+    
+    if Keys[__Key] == 1 then return 1 end
+    
+    return 0
+
+end
+
+--[[
+
+demo
+
+if player() != owner() then return end
+
+require("pl@form/em-core/keypress_api.txt")
+
+hook.add("think","EM Core KeyPress Demo",function()
+
+    print(keyPressed(owner() , "forward")) //Caps doesnt matter
+
+end)
+
+]]--

@@ -1,0 +1,27 @@
+--@name Shared Chat API
+--@author Extra Mental 76561198049754938 EM-Core
+--@shared
+
+//Just require this file and the PlayerChat hook will work server side
+
+if CLIENT then
+    if player() != owner() then return end
+    hook.add("PlayerChat","em-core_shared_chat", function(Ply, Msg, SameTeam, IsDead)
+        if not Ply:isValid() then return end
+        net.start("em-core_shared_chat")
+            net.writeEntity(Ply)
+            net.writeString(Msg)
+            net.writeBool(SameTeam)
+            net.writeBool(IsDead)
+        net.send()
+    end)
+    return
+end
+
+net.receive("em-core_shared_chat",function()
+    local Ply = net.readEntity()
+    local Msg = net.readString()
+    local SameTeam = net.readBool()
+    local IsDead = net.readBool()
+    hook.run("PlayerChat", Ply, Msg, SameTeam, IsDead)
+end)
